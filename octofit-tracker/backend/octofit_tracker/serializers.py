@@ -10,9 +10,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TeamSerializer(serializers.ModelSerializer):
+    members_count = serializers.SerializerMethodField()
+    
     class Meta:
         model = Team
-        fields = ['_id', 'name', 'description', 'created_at']
+        fields = ['_id', 'name', 'description', 'created_at', 'members_count']
+    
+    def get_members_count(self, obj):
+        """Calculate the number of members in this team"""
+        return User.objects.filter(team_id=str(obj._id)).count()
 
 
 class ActivitySerializer(serializers.ModelSerializer):
